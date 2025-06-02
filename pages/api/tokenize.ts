@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import kuromoji from 'kuromoji'
-import path from 'path'
+import { collection, addDoc, Timestamp } from 'firebase/firestore'
+import kuromoji from 'kuromoji';
+import path from 'path';
+import {db} from "../../lib/firebase";
 
 const dicPath = path.join(process.cwd(), 'public/kuromoji/dict')
 
@@ -28,6 +30,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const tokenizer = await createTokenizer()
         const tokens = tokenizer.tokenize(sentence)
         const surfaceForms = tokens.map((t) => t.surface_form)
+
+        // return res.status(200).json({ tokens: surfaceForms })
+        await addDoc(collection(db, 'sentences'), {
+            sentence,
+            tokens: surfaceForms,
+            createdAt: Timestamp.now(),
+        })
 
         return res.status(200).json({ tokens: surfaceForms })
     } catch (err) {
