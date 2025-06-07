@@ -1,4 +1,4 @@
-import SentenceInput from "../components/SentenceInput";
+import SentenceInput from "@/components/SentenceInput";
 
 export default function Home() {
     return (
